@@ -1,6 +1,10 @@
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
 import { resolveLivePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import {
+  createGBrainExtractionRouteHandler,
+  GBRAIN_EXTRACTION_ROUTE_PATH,
+} from "./gbrain-extraction-route.js";
 import { createCodexAppServerAgentHarness } from "./harness.js";
 import { buildCodexMediaUnderstandingProvider } from "./media-understanding-provider.js";
 import { buildCodexProvider } from "./provider.js";
@@ -29,6 +33,12 @@ export default definePluginEntry({
     api.registerMediaUnderstandingProvider(
       buildCodexMediaUnderstandingProvider({ pluginConfig: api.pluginConfig }),
     );
+    api.registerHttpRoute({
+      path: GBRAIN_EXTRACTION_ROUTE_PATH,
+      auth: "gateway",
+      match: "exact",
+      handler: createGBrainExtractionRouteHandler({ pluginConfig: api.pluginConfig }),
+    });
     api.registerMigrationProvider(buildCodexMigrationProvider());
     api.registerCommand(createCodexCommand({ pluginConfig: api.pluginConfig }));
     api.on("inbound_claim", (event, ctx) =>

@@ -19,6 +19,7 @@ describe("codex plugin", () => {
     const registerMediaUnderstandingProvider = vi.fn();
     const registerMigrationProvider = vi.fn();
     const registerProvider = vi.fn();
+    const registerHttpRoute = vi.fn();
     const on = vi.fn();
     const onConversationBindingResolved = vi.fn();
 
@@ -32,6 +33,7 @@ describe("codex plugin", () => {
         runtime: {} as never,
         registerAgentHarness,
         registerCommand,
+        registerHttpRoute,
         registerMediaUnderstandingProvider,
         registerMigrationProvider,
         registerProvider,
@@ -57,6 +59,12 @@ describe("codex plugin", () => {
     expect(registerCommand.mock.calls[0]?.[0]).toMatchObject({
       name: "codex",
       description: "Inspect and control the Codex app-server harness",
+    });
+    expect(registerHttpRoute).toHaveBeenCalledWith({
+      path: "/plugins/gbrain/extract",
+      auth: "gateway",
+      match: "exact",
+      handler: expect.any(Function),
     });
     expect(registerMigrationProvider.mock.calls[0]?.[0]).toMatchObject({
       id: "codex",
